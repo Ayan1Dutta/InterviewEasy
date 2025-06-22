@@ -51,8 +51,8 @@ export const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       return res.status(401).json({ message: "Incorrect password" });
-    generateToken(user, res);
-    res.status(200).json({ message: "Login successful",email});
+    const authToken=generateToken(user, res);
+    res.status(200).json({ message: "Login successful",email,authToken});
 
   } catch (err) {
     console.error('Login error:', err.message);

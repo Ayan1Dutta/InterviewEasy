@@ -14,17 +14,19 @@ import {
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import Navbar from './Navbar';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const Home = () => {
     const [interviewCode, setInterviewCode] = useState('');
     const [copySuccess, setCopySuccess] = useState(false);
-
+    const navigate = useNavigate()
     const theme = useTheme();
     const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
 
     const handleJoin = () => {
         // Handle joining logic here
         console.log('Joining with code:', interviewCode);
+        navigate("/interview/sessions/interviewCode")
     };
 
     const handleCopy = () => {
@@ -35,8 +37,7 @@ const Home = () => {
     };
 
     const handleCreate = () => {
-        // Handle create logic (e.g., generate a new room)
-        const newCode = crypto.randomUUID().slice(0, 8); // Just an example
+        const newCode = crypto.randomUUID().slice(0, 8);
         setInterviewCode(newCode);
     };
 

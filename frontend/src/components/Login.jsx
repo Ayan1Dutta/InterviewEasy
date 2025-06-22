@@ -20,6 +20,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useEffect } from 'react';
 import { AuthContext } from '../contexts/user.context';
 import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const theme = createTheme({
   palette: {
@@ -55,10 +56,14 @@ const Login = () => {
     }
   }, [Error]);
 
-
+  const navigate= useNavigate();
   const handleTogglePassword = () => {
     setShowPassword((prev) => !prev);
   };
+  const handleClickToSignUp=(e)=>{
+    e.preventDefault();
+    navigate("/signup")
+  }
   const handleSubmit = async (e) => {
     try {
       const res = await axios.post('http://localhost:3000/api/auth/login', {
@@ -72,10 +77,12 @@ const Login = () => {
       })
       const data = res?.data;
       // Optional: If your backend returns { error: "something" }
+      console.log("from login");
+      console.log(data);
+
       if (data.error) {
         throw new Error(data.error);
       }
-      // Store token in localStorage if not using httpOnly cookies
       localStorage.setItem("CodeSync_token", JSON.stringify(data.authToken));
       // Set user in global state (via context)
       setAuthUser(data);
@@ -181,7 +188,7 @@ const Login = () => {
               <Link href="#" underline="hover" color="primary.light">
                 Forgot password?
               </Link>
-              <Link href="/signup" underline="hover" color="primary.light">
+              <Link  underline="hover" color="primary.light" onClick={handleClickToSignUp}  sx={{ cursor: 'pointer' }}>
                 Sign up
               </Link>
             </Box>

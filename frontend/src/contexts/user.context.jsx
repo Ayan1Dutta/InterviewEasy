@@ -9,9 +9,9 @@ export const AuthContext = createContext();
 export const AuthContextProvider =  ({ children }) => {
 
     const [authUser, setAuthUser] = useState("");
-    const [user,setUser] = useState(localStorage.getItem("CodeSync_token")|| undefined);
+    const [user,setUser] = useState(localStorage.getItem("CodeSync_token")|| null);
     useEffect(()=>{
-        if(user !== "undefined")
+        if(user)
             setAuthUser(JSON.parse(user));
     },[user]);
     return <AuthContext.Provider value={{ authUser, setAuthUser }}>{children}</AuthContext.Provider>;

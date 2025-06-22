@@ -19,6 +19,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useContext } from 'react';
 import { AuthContext } from '../contexts/user.context';
+import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,7 +28,7 @@ const Signup = () => {
   const [Password, setPassword] = useState('');
   const [Error, setError] = useState('');
   const { authUser, setAuthUser } = useContext(AuthContext)
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (Error) {
       const timer = setTimeout(() => setError(null), 2000);
@@ -38,6 +39,10 @@ const Signup = () => {
   const handleTogglePassword = () => {
     setShowPassword((prev) => !prev);
   };
+  const handleLoginClick=(e)=>{
+    e.preventDefault();
+    navigate("/login");
+  }
 
   const handleSubmit = async () => {
     try {
@@ -169,7 +174,7 @@ const Signup = () => {
               fontSize: '0.9rem',
             }}
           >
-            <Link href="#" underline="hover" color="primary.light">
+            <Link underline="hover" color="primary.light" onClick={handleLoginClick} sx={{cursor:"pointer"}}>
               Already have an account? Login
             </Link>
           </Box>

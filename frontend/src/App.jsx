@@ -6,6 +6,7 @@ import Signup from './components/SignUp';
 import Home from './components/Home';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AuthContext } from './contexts/user.context';
+import Interview from './components/Interview';
 
 
 const socket = io('http://localhost:3000', {
@@ -17,6 +18,8 @@ const socket = io('http://localhost:3000', {
 
 const App = () => {
   const {authUser} =useContext(AuthContext);
+  console.log("app");
+  console.log(authUser);
   useEffect(()=>{
     socket.on('connect',()=>{
       console.log('Connected to server with id:', socket.id);
@@ -26,10 +29,10 @@ const App = () => {
   return (
      <div>
 			<Routes>
-				<Route path='/' element={authUser ? <Home /> : <Navigate to={"/login"} />} />
+				<Route path='/' exact element={authUser ? <Home /> : <Navigate to={"/login"} />} />
 				<Route path='/login' element={authUser ? <Navigate to='/' /> : <Login />} />
 				<Route path='/signup' element={authUser ? <Navigate to='/' /> : <Signup />} />
-				{/* <Route path='/interview/sessions/:code' element={authUser ? <Interview /> : <Navigate to={"/login"} />} /> */}
+				<Route path='/interview/sessions/:code' element={authUser ? <Interview /> : <Navigate to={"/login"} />} />
 				<Route path='*' element={<Navigate to={"/login"} />} />
 			</Routes>
 		</div>
