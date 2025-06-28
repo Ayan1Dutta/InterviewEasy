@@ -4,10 +4,15 @@ import { createServer } from 'http'
 import { Server } from 'socket.io'
 import authRoute from './routes/auth.route.js'
 import { connectToDatabase } from './utilities/db.utils.js'
+import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
+import sessionRoute from './routes/session.routes.js'
+import { initializeSocket } from './socket/socket.js'
+
+
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+export const PORT = process.env.PORT || 3000;
 
 dotenv.config();
 
@@ -21,31 +26,19 @@ app.use(cors({
 }
 ));
 
-const server = createServer(app);
+const server = createServer(app); 
 
-const io = new Server(server, {
-    cors: {
-        origin: "http://localhost:5173", // Set to your frontend URL
-        methods: ["GET", "POST", "PUT", "DELETE"],
-        credentials: true,
-    },
-})
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api/auth", authRoute);
+app.use("/api/interview" , sessionRoute);
 
 
-io.on('connection', (socket) => {
-    console.log('Client connected:', socket.id);
-
-    socket.on('diconnect', () => {
-        console.log('Client disconnected:', socket.id);
-    })
-})
+initializeSocket(server);
 // console.log(process.env.MONGO_URI);
 //connect to maongoDB
 connectToDatabase();
-
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 })

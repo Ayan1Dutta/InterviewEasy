@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import CodeEditor from './CodeEditor';
 
-// 16:9 video container
+
 const VideoBox = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.grey[900],
   position: 'relative',
@@ -40,7 +40,7 @@ const Interview = () => {
   const [output, setOutput] = useState('');
   const editorRef = useRef();
 
-  // fraction (0–1) of container height occupied by editor
+  
   const [editorFraction, setEditorFraction] = useState(0.7);
   const containerRef = useRef();
 
@@ -70,7 +70,6 @@ const Interview = () => {
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   };
-
   return (
     <Box sx={{ display: 'flex', height: '100vh' }}>
       {/* Left panel: video feeds (25% width) */}

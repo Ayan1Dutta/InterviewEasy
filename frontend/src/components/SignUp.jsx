@@ -58,13 +58,13 @@ const Signup = () => {
           withCredentials: true, // useful if using HTTP-only cookies
         }
       );
-      const data = res.data;
+      const {email,authToken} = res?.data;
       // Optional: If your backend returns { error: "something" }
       if (data.error) {
         throw new Error(data.error);
       }
       // Store token in localStorage if not using httpOnly cookies
-      localStorage.setItem("CodeSync_token", JSON.stringify(data.authToken));
+      localStorage.setItem("CodeSync_token", JSON.stringify({email,authToken}));
       // Set user in global state (via context)
       setAuthUser(data);
       // Navigate to homepage (or dashboard)

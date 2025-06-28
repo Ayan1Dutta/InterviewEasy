@@ -76,14 +76,11 @@ const Login = () => {
         withCredentials: true,
       })
       const data = res?.data;
-      // Optional: If your backend returns { error: "something" }
-      console.log("from login");
-      console.log(data);
 
       if (data.error) {
         throw new Error(data.error);
       }
-      localStorage.setItem("CodeSync_token", JSON.stringify(data.authToken));
+      localStorage.setItem("CodeSync_token", JSON.stringify({"token":data.authToken,"email":data.email}));
       // Set user in global state (via context)
       setAuthUser(data);
       // Navigate to homepage (or dashboard)
