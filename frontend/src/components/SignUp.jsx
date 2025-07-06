@@ -58,8 +58,8 @@ const Signup = () => {
           withCredentials: true, // useful if using HTTP-only cookies
         }
       );
-      const {email,authToken} = res?.data;
-      // Optional: If your backend returns { error: "something" }
+      const data = res?.data;
+      const {email,authToken} = data;
       if (data.error) {
         throw new Error(data.error);
       }

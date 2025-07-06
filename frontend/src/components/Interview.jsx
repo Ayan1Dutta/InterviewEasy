@@ -117,7 +117,7 @@ const Interview = () => {
             language="javascript"
             value={code}
             onChange={setCode}
-            onMount={(editor) => { editorRef.current = editor; }}
+            onMount={(editor) => { editorRef.current = editor}}
             options={{
               minimap: { enabled: false },
               wordWrap: 'on',

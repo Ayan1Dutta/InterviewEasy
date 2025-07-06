@@ -18,6 +18,7 @@ import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/user.context';
 import axios from 'axios';
+import { SocketContext } from '../contexts/socket.context';
 
 const Home = () => {
   const { authUser } = useContext(AuthContext);
@@ -31,6 +32,7 @@ const Home = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
+  const {socket} = useContext(SocketContext)
 
   // auto-hide error popup
   useEffect(() => {
@@ -56,12 +58,12 @@ const Home = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/interview/sessions/${interviewCode}`,
-        { sessionCode: interviewCode },
+        'http://localhost:3000/api/interview/sessions',
+        {},
         { withCredentials: true }
       );
-
       if (response.data.success) {
+        socket.emit("join-room",interviewCode);
         navigate(`/interview/sessions/${interviewCode}`, {
           state: { isHost: false },
         });
@@ -95,6 +97,7 @@ const Home = () => {
 
       if (response.data.success) {
         const code = response.data.code;
+        socket.emit("join-room",code);
         navigate(`/interview/sessions/${code}`, { state: { isHost: true } });
       } else {
         triggerError('Failed to create interview session. Please try again.');

@@ -11,10 +11,25 @@ const initializeSocket = (server) => {
 
     io.on('connection', (socket) => {
         console.log('Client connected:', socket.id);
-        // socket.on("join-session",);
         socket.on('diconnect', () => {
             console.log('Client disconnected:', socket.id);
         })
+        socket.on('join-room', (roomId) => {
+            socket.join(roomId);
+            console.log(`Socket ${socket.id} joined room ${roomId}`);
+
+            // if (roomContents[roomId]) {
+            //     socket.emit('init', roomContents[roomId]);
+            // }
+        });
+        socket.on('send-delta', ({ roomId, delta }) => {
+            // Save last content (optional)
+            // roomContents[roomId] = delta.fullContent || roomContents[roomId];
+            // Broadcast only to others in the same room
+            socket.to(roomId).emit('remote-delta', delta);
+        });
+
+
     })
 };
 
