@@ -1,6 +1,8 @@
 import CodeSnippet from "../models/code.model.js";
 import Session from "../models/session.model.js";
 import { v4 as uuidv4 } from 'uuid';
+import { getSocketInstance } from "../socket/socket.js";
+
 
 export const createSession = async (req, res) => {
     try {
@@ -40,22 +42,19 @@ export const joinSession = async(req , res) => {
     const { sessionCode } = req.body;
     try {
         const session = await Session.findOne({ sessionCode });
-        if (!session) return res.status(404).json({ error: 'Session not found' });
+        if (!session) return res.status(404).json({ message: 'Session not found' });
         const io = getSocketInstance();
-
         const socketsInRoom = await io.in(sessionCode).fetchSockets();
-
-         if(socketsInRoom.length === 2) {
-            return res.status(400).json({ error: 'Session is already full' });
+        if(socketsInRoom.length === 2) {
+            return res.status(400).json({ message: 'Session is already full' });
         }
         if (!session.participants.includes(req.user._id)) {
             session.participants.push(req.user.id);
             await session.save();
         }
-
         res.json({ success: true, session });
     } catch (err) {
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ message: "Not Authorized To Enter" });
     }
 
 }
@@ -64,7 +63,7 @@ export const endInterview = async(req , res) => {
     const { sessionCode } = req.body;
     try {
         const session = await Session.findOne({ sessionCode });
-        if (!session) return res.status(404).json({ error: 'Session not found' });
+        if (!session) return res.status(404).json({ message: 'Session not found' });
 
         // Remove the session
         await Session.deleteOne({ sessionCode });

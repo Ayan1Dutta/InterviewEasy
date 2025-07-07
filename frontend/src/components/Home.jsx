@@ -32,7 +32,7 @@ const Home = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
-  const {socket} = useContext(SocketContext)
+  const { socket } = useContext(SocketContext)
 
   // auto-hide error popup
   useEffect(() => {
@@ -55,23 +55,19 @@ const Home = () => {
       triggerError('Please enter a valid code');
       return;
     }
-
     try {
       const response = await axios.post(
-        'http://localhost:3000/api/interview/sessions',
-        {},
+        'http://localhost:3000/api/interview/sessions/join',
+        { sessionCode: interviewCode },
         { withCredentials: true }
       );
-      if (response.data.success) {
-        socket.emit("join-room",interviewCode);
-        navigate(`/interview/sessions/${interviewCode}`, {
-          state: { isHost: false },
-        });
-      } else {
-        triggerError(response.data.error || 'Failed to join interview session.');
-      }
+      socket.emit("join-room", interviewCode);
+      navigate(`/interview/sessions/${interviewCode}`, {
+        state: { isHost: false },
+      });
+
     } catch (err) {
-      triggerError(err.response?.data?.error || 'Something went wrong while joining');
+      triggerError(err.response?.data?.message || 'Something went wrong while joining');
     }
   };
 
@@ -97,13 +93,13 @@ const Home = () => {
 
       if (response.data.success) {
         const code = response.data.code;
-        socket.emit("join-room",code);
+        socket.emit("join-room", code);
         navigate(`/interview/sessions/${code}`, { state: { isHost: true } });
       } else {
         triggerError('Failed to create interview session. Please try again.');
       }
     } catch (err) {
-      triggerError(err.response?.data?.error || 'Something went wrong while creating InterView Secession');
+      triggerError(err.response?.data?.message || 'Something went wrong while creating InterView Secession');
     }
   };
 

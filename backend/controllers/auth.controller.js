@@ -30,7 +30,7 @@ export const signUp = async (req, res) => {
 
     const authToken=generateToken(savedUser, res);
 
-    return res.status(201).json({ message: "User created successfully",name,email,authToken});
+    return res.status(201).json({ message: "User created successfully", name,email,authToken});
 
   } catch (err) {
     console.error('Error creating user:', err.message);
@@ -46,7 +46,7 @@ export const login = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user)
-      return res.status(404).json({ message: "User does not exist with this email" });
+      return res.status(401).json({ message: "User does not exist with this email" });
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)

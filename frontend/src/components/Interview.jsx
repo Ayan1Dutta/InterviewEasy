@@ -114,9 +114,6 @@ const Interview = () => {
         {/* Editor pane */}
         <Box sx={{ flex: editorFraction, overflow: 'hidden' }}>
           <CodeEditor
-            language="javascript"
-            value={code}
-            onChange={setCode}
             onMount={(editor) => { editorRef.current = editor}}
             options={{
               minimap: { enabled: false },

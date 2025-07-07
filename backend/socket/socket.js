@@ -28,8 +28,9 @@ const initializeSocket = (server) => {
             // Broadcast only to others in the same room
             socket.to(roomId).emit('remote-delta', delta);
         });
-
-
+        socket.on('change-language',({roomId,CodeLanguage})=>{
+            socket.to(roomId).emit('remote-change-language', CodeLanguage);
+        })
     })
 };
 

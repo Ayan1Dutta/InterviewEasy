@@ -39,7 +39,7 @@ const Signup = () => {
   const handleTogglePassword = () => {
     setShowPassword((prev) => !prev);
   };
-  const handleLoginClick=(e)=>{
+  const handleLoginClick = (e) => {
     e.preventDefault();
     navigate("/login");
   }
@@ -55,28 +55,19 @@ const Signup = () => {
         },
         {
           headers: { 'Content-Type': 'application/json' },
-          withCredentials: true, // useful if using HTTP-only cookies
+          withCredentials: true,
         }
       );
-      const data = res?.data;
-      const {email,authToken} = data;
-      if (data.error) {
-        throw new Error(data.error);
-      }
-      // Store token in localStorage if not using httpOnly cookies
-      localStorage.setItem("CodeSync_token", JSON.stringify({email,authToken}));
-      // Set user in global state (via context)
-      setAuthUser(data);
-      // Navigate to homepage (or dashboard)
+
+      const { email, authToken } = res.data;
+      localStorage.setItem("CodeSync_token", JSON.stringify({ email, authToken }));
+      setAuthUser(res.data);
       navigate("/");
 
     } catch (err) {
       console.error(err);
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError(err.message || 'Unexpected error occurred');
-      }
+      const msg = err.response?.data?.message || err.message || "Unexpected error occurred";
+      setError(msg);
     }
   };
 
@@ -174,7 +165,7 @@ const Signup = () => {
               fontSize: '0.9rem',
             }}
           >
-            <Link underline="hover" color="primary.light" onClick={handleLoginClick} sx={{cursor:"pointer"}}>
+            <Link underline="hover" color="primary.light" onClick={handleLoginClick} sx={{ cursor: "pointer" }}>
               Already have an account? Login
             </Link>
           </Box>

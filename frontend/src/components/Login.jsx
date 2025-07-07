@@ -49,53 +49,61 @@ const Login = () => {
     if (Error) {
       const timer = setTimeout(() => {
         setError(null);
-      }, 2000); 
+      }, 2000);
       return () => {
         clearTimeout(timer);
       }
     }
   }, [Error]);
 
-  const navigate= useNavigate();
+  const navigate = useNavigate();
   const handleTogglePassword = () => {
     setShowPassword((prev) => !prev);
   };
-  const handleClickToSignUp=(e)=>{
+  const handleClickToSignUp = (e) => {
     e.preventDefault();
     navigate("/signup")
   }
   const handleSubmit = async (e) => {
     try {
-      const res = await axios.post('http://localhost:3000/api/auth/login', {
-        email: Email,
-        password: Password
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
+      const res = await axios.post(
+        'http://localhost:3000/api/auth/login',
+        {
+          email: Email,
+          password: Password,
         },
-        withCredentials: true,
-      })
-      const data = res?.data;
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+      const data = res.data;
 
-      if (data.error) {
-        throw new Error(data.error);
-      }
-      localStorage.setItem("CodeSync_token", JSON.stringify({"token":data.authToken,"email":data.email}));
-      // Set user in global state (via context)
+      // Save token (if using localStorage)
+      localStorage.setItem(
+        "CodeSync_token",
+        JSON.stringify({ token: data.authToken, email: data.email })
+      );
+
       setAuthUser(data);
-      // Navigate to homepage (or dashboard)
       navigate("/");
+
     } catch (err) {
-      console.log(err.response);
+      console.error("Login Error:", err);
+
       if (err.response) {
+        // Backend responded with error (e.g. 400, 401, 500)
         setError(err.response.data.message || "Something went wrong");
       } else if (err.request) {
+        // No response from server (server might be down)
         setError("No response from server. Please try again later.");
       } else {
+        // Error setting up request
         setError(err.message || "Unexpected error occurred");
       }
     }
-  }
+  };
+
 
   return (
     <>
@@ -185,7 +193,7 @@ const Login = () => {
               <Link href="#" underline="hover" color="primary.light">
                 Forgot password?
               </Link>
-              <Link  underline="hover" color="primary.light" onClick={handleClickToSignUp}  sx={{ cursor: 'pointer' }}>
+              <Link underline="hover" color="primary.light" onClick={handleClickToSignUp} sx={{ cursor: 'pointer' }}>
                 Sign up
               </Link>
             </Box>

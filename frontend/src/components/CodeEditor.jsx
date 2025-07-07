@@ -6,24 +6,29 @@ import { SocketContext } from '../contexts/socket.context';
 import { useParams } from 'react-router-dom';
 
 const CodeEditor = ({
-  language = 'javascript',
-  value,
-  onChange,
+  
   onMount,
-  options = {},
-  languages = ['javascript', 'typescript', 'python', 'java', 'c', 'cpp'],
+  options,
+ 
 }) => {
+  const languages = ['javascript', 'typescript', 'python', 'java', 'c', 'cpp']
   const theme = useTheme();
   const editorRef = useRef(null);
   const suppress = useRef(false);
 
+
   const editorTheme = theme.palette.mode === 'dark' ? 'vs-dark' : 'light';
   const { socket } = useContext(SocketContext);
-  const [currentLang, setCurrentLang] = useState(language);
+  const [currentLang, setCurrentLang] = useState('javascript');
   const { code: roomId } = useParams();
 
   const handleLangChange = (e) => {
+    socket.emit('change-language',{
+      roomId,
+      CodeLanguage:e.target.value
+    })
     setCurrentLang(e.target.value);
+
   };
 
   useEffect(() => {
@@ -61,11 +66,16 @@ const CodeEditor = ({
       }
     });
 
+    socket.on("remote-change-language",(currentLang=>{
+      setCurrentLang(currentLang);
+    }));
+
     return () => {
       socket.off('remote-delta');
       socket.off('init');
+
     };
-  }, [socket, roomId]);
+  }, [socket,roomId]);
 
   const handleEditorDidMount = useCallback((editor, monaco) => {
     editorRef.current = editor;
@@ -108,10 +118,8 @@ const CodeEditor = ({
 
       <Editor
         height="100%"
-        defaultLanguage={language}
+        defaultLanguage={'javascript'}
         language={currentLang}
-        value={value}
-        onChange={onChange}
         onMount={handleEditorDidMount}
         theme={editorTheme}
         options={{
