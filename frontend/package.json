@@ -17,6 +17,7 @@
     "@mui/material": "^7.1.1",
     "@mui/styled-engine-sc": "^7.1.1",
     "axios": "^1.9.0",
+    "jodit-react": "^5.2.19",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "monaco-editor": "^0.52.2",
@@ -24,6 +25,10 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.2",
+    "slate": "^0.117.2",
+    "slate-history": "^0.113.1",
+    "slate-hyperscript": "^0.100.0",
+    "slate-react": "^0.117.3",
     "socket.io-client": "^4.8.1",
     "styled-components": "^6.1.18"
   },

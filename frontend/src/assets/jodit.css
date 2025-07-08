@@ -1,0 +1,20 @@
+/* Remove extra borders/wrappers from Jodit */
+.jodit-container {
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background-color: #1e1e1e !important;
+}
+
+.jodit-status-bar {
+  display: none !important;
+}
+
+.jodit-toolbar__box {
+  border: none !important;
+}
+
+.jodit-wysiwyg {
+  background-color: #1e1e1e !important;
+  color: white !important;
+}

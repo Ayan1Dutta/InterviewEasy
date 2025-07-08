@@ -4,22 +4,19 @@ import { useTheme } from '@mui/material/styles';
 import { Box, FormControl, Select, MenuItem } from '@mui/material';
 import { SocketContext } from '../contexts/socket.context';
 import { useParams } from 'react-router-dom';
+import {languageBoilerplates} from "../assets/languages.js"
 
 const CodeEditor = ({
-  
-  onMount,
   options,
- 
 }) => {
   const languages = ['javascript', 'typescript', 'python', 'java', 'c', 'cpp']
   const theme = useTheme();
   const editorRef = useRef(null);
   const suppress = useRef(false);
-
-
   const editorTheme = theme.palette.mode === 'dark' ? 'vs-dark' : 'light';
   const { socket } = useContext(SocketContext);
   const [currentLang, setCurrentLang] = useState('javascript');
+  const [code, setCode] = useState(languageBoilerplates[currentLang]);
   const { code: roomId } = useParams();
 
   const handleLangChange = (e) => {
@@ -28,7 +25,7 @@ const CodeEditor = ({
       CodeLanguage:e.target.value
     })
     setCurrentLang(e.target.value);
-
+    setCode(languageBoilerplates[e.target.value]);
   };
 
   useEffect(() => {
@@ -73,6 +70,7 @@ const CodeEditor = ({
     return () => {
       socket.off('remote-delta');
       socket.off('init');
+      socket.off('remote-change-language');
 
     };
   }, [socket,roomId]);
@@ -93,9 +91,7 @@ const CodeEditor = ({
         });
       }
     });
-
-    if (onMount) onMount(editor, monaco);
-  }, [roomId, socket, onMount]);
+  }, [roomId, socket]);
 
   return (
     <Box sx={{ position: 'relative', height: '100%' }}>
@@ -119,6 +115,7 @@ const CodeEditor = ({
       <Editor
         height="100%"
         defaultLanguage={'javascript'}
+        value={code}
         language={currentLang}
         onMount={handleEditorDidMount}
         theme={editorTheme}

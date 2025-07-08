@@ -31,6 +31,9 @@ const initializeSocket = (server) => {
         socket.on('change-language',({roomId,CodeLanguage})=>{
             socket.to(roomId).emit('remote-change-language', CodeLanguage);
         })
+        socket.on('sendContentUpdate',({roomId,content})=>{
+            socket.to(roomId).emit('receiveContentUpdate', content);
+        })
     })
 };
 
