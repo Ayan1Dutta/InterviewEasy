@@ -1,4 +1,6 @@
 import { Server } from "socket.io";
+import CodeSnippet from "../models/code.model.js";
+import Session from "../models/session.model.js";
 let io;
 const initializeSocket = (server) => {
     io = new Server(server, {
@@ -11,28 +13,51 @@ const initializeSocket = (server) => {
 
     io.on('connection', (socket) => {
         console.log('Client connected:', socket.id);
-        socket.on('diconnect', () => {
+
+        socket.on('disconnect', () => {
             console.log('Client disconnected:', socket.id);
         })
-        socket.on('join-room', (roomId) => {
+
+        socket.on('join-room', async (roomId) => {
             socket.join(roomId);
             console.log(`Socket ${socket.id} joined room ${roomId}`);
+            const session = await Session.findOne({ sessionCode: roomId });
 
-            // if (roomContents[roomId]) {
-            //     socket.emit('init', roomContents[roomId]);
-            // }
+            if (!session) {
+                socket.emit('init-code', { code: { javascript: '', java: '', cpp: '' } });
+                return;
+            }
+            const codeDoc = await CodeSnippet.findOne({ sessionId: session._id });
+            if (codeDoc) {
+                socket.emit('init-code', { code: codeDoc.code });
+            }
         });
+
         socket.on('send-delta', ({ roomId, delta }) => {
-            // Save last content (optional)
-            // roomContents[roomId] = delta.fullContent || roomContents[roomId];
-            // Broadcast only to others in the same room
             socket.to(roomId).emit('remote-delta', delta);
         });
-        socket.on('change-language',({roomId,CodeLanguage})=>{
+        socket.on('persistCodeToDB', async ({ roomId, language, content }) => {
+            if (!roomId || !language || typeof content !== 'string') {
+                console.log('Bad payload:', { roomId, language, content });
+                return;
+            }
+            // console.log(language,content);
+            const session = await Session.findOne({ sessionCode: roomId });
+            if (!session) return;
+            const sessionId = session._id;
+
+            let codeDoc = await CodeSnippet.findOne({ sessionId });
+            if (!codeDoc) {
+                codeDoc = new CodeSnippet({ sessionId });
+            }
+            codeDoc.code.set(language, content);
+            codeDoc.lastUpdated = new Date();
+            await codeDoc.save();
+            // console.log(`Code updated for ${language} in database`);
+        });
+
+        socket.on('change-language', ({ roomId, CodeLanguage }) => {
             socket.to(roomId).emit('remote-change-language', CodeLanguage);
-        })
-        socket.on('sendContentUpdate',({roomId,content})=>{
-            socket.to(roomId).emit('receiveContentUpdate', content);
         })
     })
 };

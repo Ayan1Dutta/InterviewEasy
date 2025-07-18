@@ -1,5 +1,5 @@
 // src/components/Interview.jsx
-import React, { useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -8,7 +8,9 @@ import {
 } from '@mui/material';
 import CollaborativeEditorPopup from './NoteEditor';
 import CodeEditor from './CodeEditor';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { AuthContext } from '../contexts/user.context';
+import axios from 'axios';
 
 const VideoBox = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.grey[900],
@@ -52,7 +54,14 @@ const Interview = () => {
   const [popupOpen, setPopupOpen] = useState(false);
   const [output, setOutput] = useState('');
   const [editorFraction, setEditorFraction] = useState(0.7);
+  const [initialCode, setinitialCode] = useState("");
+  const [startTime, setStartTime] = useState(null);
+  const [elapsedTime, setElapsedTime] = useState('00:00');
+  const navigate = useNavigate();
+
   const { code: roomId } = useParams();
+  const { authUser } = useContext(AuthContext);
+
 
   const editorRef = useRef();
   const containerRef = useRef();
@@ -60,8 +69,43 @@ const Interview = () => {
   const videoRef = useRef(null);
   const mediaStreamRef = useRef(null);
 
+  const [host, setHost] = useState(false)
   const [isVideoOn, setIsVideoOn] = useState(false);
   const [isAudioOn, setIsAudioOn] = useState(false);
+
+
+  useEffect(() => {
+    const fetchInterviewInfo = async () => {
+      try {
+        const res = await axios.post("http://localhost:3000/api/interview/sessions/interview", { sessionCode: roomId },
+          {
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true,
+          });
+        const { host_email, code } = res.data;
+        if (host_email === authUser.email) {
+          setHost(true);
+        }
+        setinitialCode(code);
+        setStartTime(new Date());
+      } catch (err) {
+        console.log("error in Interview Route", err.response?.data?.message || err.message);
+      }
+    };
+    if (authUser) fetchInterviewInfo();
+  }, [authUser, roomId]);
+  useEffect(() => {
+    if (startTime) {
+      const interval = setInterval(() => {
+        const elapsed = new Date() - startTime;
+        const minutes = Math.floor(elapsed / 60000);
+        const seconds = Math.floor((elapsed % 60000) / 1000);
+        setElapsedTime(`${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [startTime]);
 
   const toggleVideo = async () => {
     const videoTrack = mediaStreamRef.current?.getVideoTracks()?.[0];
@@ -101,7 +145,7 @@ const Interview = () => {
       });
 
       mediaStreamRef.current = stream;
-      
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
@@ -141,6 +185,26 @@ const Interview = () => {
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   };
+
+  const handleEndInterview = async (e) => {
+
+    e.preventDefault();
+    try {
+      const res = await axios.post('http://localhost:3000/api/interview/sessions/end', {
+        sessionCode: roomId
+      },
+      {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      }
+      );
+      if(res) alert(res.data.message || 'Ended');
+      navigate('/')
+      
+    } catch (err) {
+      alert('something wrong happened while deleting intrview');
+    }
+  }
 
   return (
     <Box sx={{ display: 'flex', height: '100vh' }}>
@@ -198,6 +262,7 @@ const Interview = () => {
               wordWrap: 'on',
               automaticLayout: true,
             }}
+            content={initialCode}
           />
         </Box>
 
@@ -214,7 +279,15 @@ const Interview = () => {
             boxSizing: 'border-box',
           }}
         >
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+            {host && (
+              <Button variant="contained" size="small" onClick={handleEndInterview}>
+                End
+              </Button>
+            )}
+            <Box sx={{ fontSize: '1rem' }}>
+              {elapsedTime}
+            </Box>
             <Button variant="contained" size="small" onClick={handleRun}>
               Run ▶️
             </Button>

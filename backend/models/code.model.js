@@ -3,22 +3,17 @@ import mongoose from "mongoose";
 const CodeSnippetSchema = new mongoose.Schema({
   sessionId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Session', // Reference to the Sessions collection
+    ref: 'Session',
     required: true
   },
   code: {
-    type: Object,
-    required: true
-     // Initialize with an empty code snippet
-  },
-  language: {
-    type: String,
-    default: 'javascript', // Default language is JavaScript
-    required: true
+    type: Map,
+    of: String,
+    default: { javascript: '', java: '', cpp: '' }
   },
   lastUpdated: {
     type: Date,
-    default: Date.now // Timestamp for the last update
+    default: Date.now
   }
 });
 
