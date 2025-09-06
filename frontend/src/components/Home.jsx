@@ -61,7 +61,6 @@ const Home = () => {
         { sessionCode: interviewCode },
         { withCredentials: true }
       );
-      // socket.emit("join-room", interviewCode);
       navigate(`/interview/sessions/${interviewCode}`, {
         state: { isHost: false },
       });
@@ -94,7 +93,6 @@ const Home = () => {
 
       if (response.data.success) {
         const code = response.data.code;
-        // socket.emit("join-room", code);
         navigate(`/interview/sessions/${code}`, { state: { isHost: true }});
       } else {
         triggerError('Failed to create interview session. Please try again.');

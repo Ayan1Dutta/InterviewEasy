@@ -1,12 +1,24 @@
-# React + Vite
+# PeerPrep Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Vite + React based UI for PeerPrep, the collaborative interview preparation platform.
 
-Currently, two official plugins are available:
+## Features
+* Monaco powered multi-language editor (JS / Java / C++)
+* Real-time code + language sync over Socket.io
+* Versioned full-snapshot reconciliation to prevent divergence
+* WebRTC video chat & participant presence
+* Debounced persistence to backend (MongoDB) with localStorage mirrors
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Dev Setup
+```
+npm install
+npm run dev
+```
 
-## Expanding the ESLint configuration
+Backend must be running separately. Update API / socket origins as needed.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Branding
+Favicon & navbar logo: `public/peerprep-logo.svg`.
+
+---
+This README replaces the default Vite template docs.

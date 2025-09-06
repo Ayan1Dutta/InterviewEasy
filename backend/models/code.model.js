@@ -9,7 +9,8 @@ const CodeSnippetSchema = new mongoose.Schema({
   code: {
     type: Map,
     of: String,
-    default: { javascript: '', java: '', cpp: '' }
+    // Will be populated with boilerplates lazily if empty
+    default: () => ({ javascript: '', java: '', cpp: '' })
   },
   lastUpdated: {
     type: Date,

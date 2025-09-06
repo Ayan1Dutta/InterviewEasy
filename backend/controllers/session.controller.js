@@ -80,11 +80,15 @@ export const joinSession = async (req, res) => {
         if (!session) return res.status(404).json({ message: 'Session not found' });
         const io = getSocketInstance();
         const socketsInRoom = await io.in(sessionCode).fetchSockets();
+
+        if(session.participants.includes(req.user._id)){
+            return res.json({ success: true, session });
+        }
         if (socketsInRoom.length === 2) {
             return res.status(400).json({ message: 'Session is already full' });
         }
         if (!session.participants.includes(req.user._id)) {
-            session.participants.push(req.user.id);
+            session.participants.push(req.user._id);
             await session.save();
         }
         res.json({ success: true, session });
@@ -95,16 +99,17 @@ export const joinSession = async (req, res) => {
 }
 
 export const endInterview = async (req, res) => {
+    const io= getSocketInstance();
     const { sessionCode } = req.body;
     try {
         const session = await Session.findOne({ sessionCode });
         if (!session) return res.status(404).json({ message: 'Session not found' });
 
-        // Remove the session
         await Session.deleteOne({ sessionCode });
-        const result = await CodeSnippet.deleteOne({
+        await CodeSnippet.deleteOne({
             sessionId: session._id,
         });
+        io.to(sessionCode).emit('interview-ended', { message: 'Host ended the interview.' });
         res.json({ success: true, message: 'Session ended successfully' });
     } catch (err) {
         res.status(500).json({ error: 'Server error' });
@@ -122,9 +127,19 @@ export const GetInterviewInfo = async (req, res) => {
         const host_id = session.host;
         const Host = await User.findById(host_id);
         const host_email = Host?.email || null;
+        const host_name = Host?.name || null;
+
+        // Get all participant user objects
+        const participantUsers = await User.find({ _id: { $in: session.participants } });
+        const participants = participantUsers.map(u => ({
+            email: u.email,
+            name: u.name,
+            _id: u._id.toString(),
+        }));
+
         const codeSnippet = await CodeSnippet.findOne({ sessionId: session._id });
 
-        res.json({ host_email, code: codeSnippet });
+        res.json({ host_email, host_name, participants, code: codeSnippet });
     } catch (err) {
         res.status(500).json({ error: 'Server error' });
         console.error('Error in GetInterviewInfo:', err);

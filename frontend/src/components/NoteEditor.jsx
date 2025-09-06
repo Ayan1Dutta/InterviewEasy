@@ -31,7 +31,7 @@ const CollaborativeEditorPopup = ({ open, toggleOpen, roomId }) => {
   useEffect(() => {
     if (socket) {
       socket.on('receiveContentUpdate', (newContent) => {
-        setContent(newContent);
+        console.log('Received content update:', newContent);
       });
 
       return () => {

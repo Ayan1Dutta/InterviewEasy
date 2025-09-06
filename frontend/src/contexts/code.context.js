@@ -13,3 +13,7 @@ export function loadCodesFromLocal() {
     return null;
   }
 }
+
+export function clearCodesFromLocal() {
+  localStorage.removeItem(STORAGE_KEY);
+}

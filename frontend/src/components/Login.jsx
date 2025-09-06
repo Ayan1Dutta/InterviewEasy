@@ -90,7 +90,6 @@ const Login = () => {
 
     } catch (err) {
       console.error("Login Error:", err);
-
       if (err.response) {
         // Backend responded with error (e.g. 400, 401, 500)
         setError(err.response.data.message || "Something went wrong");

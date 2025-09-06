@@ -62,10 +62,11 @@ const Navbar = () => {
         <Typography
           variant="h6"
           component="div"
-          sx={{ flexGrow: 1, cursor: 'pointer' }}
+          sx={{ flexGrow: 1, cursor: 'pointer', display:'flex', alignItems:'center', gap:1, fontWeight:600, letterSpacing:'.5px' }}
           onClick={() => navigate('/')}
         >
-          interBee
+          <img src="/peerprep-logo.svg" alt="PeerPrep" style={{ height:32, width:32, borderRadius:6 }} />
+          PeerPrep
         </Typography>
 
         {/* Profile Button */}

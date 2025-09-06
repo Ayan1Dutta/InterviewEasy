@@ -8,6 +8,7 @@ import { AuthContextProvider } from './contexts/user.context';
 import { SocketProvider } from './contexts/socket.context';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 const darkTheme = createTheme({
     palette: {
         mode: 'dark',

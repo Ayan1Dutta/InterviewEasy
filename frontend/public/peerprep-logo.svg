@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="PeerPrep Logo">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="50%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#F97316" />
+    </linearGradient>
+  </defs>
+  <rect rx="24" ry="24" x="4" y="4" width="112" height="112" fill="url(#g)" />
+  <g font-family="'JetBrains Mono', monospace" font-weight="600" font-size="40" fill="#FFFFFF" text-anchor="middle" dominant-baseline="middle">
+    <text x="60" y="58" opacity="0.95" letter-spacing="1">{ }</text>
+    <text x="60" y="92" font-size="22" fill="url(#accent)">PP</text>
+  </g>
+</svg>
