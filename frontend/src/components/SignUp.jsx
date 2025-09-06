@@ -15,6 +15,7 @@ import {
   Alert,
 } from '@mui/material';
 import axios from 'axios';
+const BASE_URL = import.meta.env.MODE === 'development' ? 'http://localhost:3000/api' : '/api';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useContext } from 'react';
@@ -46,9 +47,8 @@ const Signup = () => {
 
   const handleSubmit = async () => {
     try {
-      const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
       const res = await axios.post(
-        `${API}/api/auth/signup`,
+        `${BASE_URL}/auth/signup`,
         {
           name: Name,
           email: Email,

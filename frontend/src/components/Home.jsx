@@ -18,6 +18,7 @@ import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/user.context';
 import axios from 'axios';
+const BASE_URL = import.meta.env.MODE === 'development' ? 'http://localhost:3000/api' : '/api';
 import { SocketContext } from '../contexts/socket.context';
 
 const Home = () => {
@@ -56,9 +57,8 @@ const Home = () => {
       return;
     }
     try {
-      const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
       const response = await axios.post(
-        `${API}/api/interview/sessions/join`,
+        `${BASE_URL}/interview/sessions/join`,
         { sessionCode: interviewCode },
         { withCredentials: true }
       );
@@ -86,9 +86,8 @@ const Home = () => {
     }
 
     try {
-      const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
       const response = await axios.post(
-        `${API}/api/interview/sessions`,
+        `${BASE_URL}/interview/sessions`,
         {},
         { withCredentials: true }
       );

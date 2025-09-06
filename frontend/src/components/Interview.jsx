@@ -21,6 +21,7 @@ import { clearCodesFromLocal } from '../contexts/code.context';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../contexts/user.context';
 import axios from 'axios';
+const BASE_URL = import.meta.env.MODE === 'development' ? 'http://localhost:3000/api' : '/api';
 import { SocketContext } from '../contexts/socket.context';
 import { useVideoCall } from '../contexts/VIdeoCallManager';
 
@@ -102,8 +103,7 @@ const Interview = () => {
   if (!socket) return;
     const fetchInterviewInfo = async () => {
       try {
-  const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-  const res = await axios.post(`${API}/api/interview/sessions/interview`, { sessionCode: roomId }, {
+  const res = await axios.post(`${BASE_URL}/interview/sessions/interview`, { sessionCode: roomId }, {
           headers: { 'Content-Type': 'application/json' },
           withCredentials: true,
         });
@@ -247,8 +247,10 @@ const Interview = () => {
         socket.emit('user-left', { roomId, email: authUser.email });
         if (host) {
           socket.emit('end-interview', { roomId });
-          const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-          navigator.sendBeacon(`${API}/api/interview/sessions/end`, JSON.stringify({ sessionCode: roomId }));
+          navigator.sendBeacon(
+            `${BASE_URL}/interview/sessions/end`,
+            JSON.stringify({ sessionCode: roomId })
+          );
         }
       }
       closeConnection();
@@ -287,8 +289,9 @@ const Interview = () => {
   const handleEndInterview = async () => {
     socket?.emit('end-interview', { roomId });
     try {
-      const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-      await axios.post(`${API}/api/interview/sessions/end`, { sessionCode: roomId }, { withCredentials: true });
+  await axios.post(`${BASE_URL}/interview/sessions/end`, {
+        sessionCode: roomId
+      }, { withCredentials: true });
     } catch (err) {
       alert('An error occurred while ending the interview.');
     }

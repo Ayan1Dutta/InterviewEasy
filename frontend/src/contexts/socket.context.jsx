@@ -17,8 +17,8 @@ export const SocketProvider = ({ children }) => {
       return;
     }
 
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-  const newSocket = io(baseUrl, {
+  const SOCKET_BASE = import.meta.env.MODE === 'development' ? 'http://localhost:3000' : '';
+  const newSocket = io(SOCKET_BASE, {
       transports: ["websocket"],
       withCredentials: true,
     });
