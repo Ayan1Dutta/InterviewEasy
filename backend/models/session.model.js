@@ -30,6 +30,11 @@ const SessionSchema = new mongoose.Schema({
     type: Date,
     default: null // Null if the session is still active
   }
+  ,
+  notes: {
+    type: String,
+    default: ''
+  }
 });
 
 const Session = mongoose.model('Session', SessionSchema);

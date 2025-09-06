@@ -108,7 +108,7 @@ const Interview = () => {
           withCredentials: true,
         });
 
-        const { host_email, participants, code } = res.data;
+  const { host_email, participants, code, notes } = res.data;
 
         setParticipants(participants);
         const hostObj = participants.find(u => u.email === host_email);
@@ -122,6 +122,9 @@ const Interview = () => {
 
   // Store initial code(s); may be object {javascript:"...", java:"..."} or string
   setInitialCode(code);
+        if (typeof notes === 'string') {
+          setNotesContent(notes);
+        }
         const myJoinTime = new Date().getTime();
         socket.emit('sync-start-time', { roomId, newStartTime: myJoinTime });
 
@@ -271,12 +274,7 @@ const Interview = () => {
     };
   }, [socket, authUser, roomId, host, closeConnection, navigate]);
 
-  const handleNotesChange = (newContent) => {
-    setNotesContent(newContent);
-    if (socket) {
-      socket.emit('send-notes-update', { roomId, content: newContent });
-    }
-  };
+  // Notes change handling moved inside NoteEditor for debounced DB persistence
 
   const handleLeaveInterview = () => {
     socket?.emit('user-left', { roomId, email: authUser.email });
@@ -413,8 +411,7 @@ const Interview = () => {
         open={popupOpen}
         toggleOpen={() => setPopupOpen(!popupOpen)}
         roomId={roomId}
-        content={notesContent}
-        onContentChange={handleNotesChange}
+        initialNotes={notesContent}
       />
 
       {/* --- CHANGE START: Logic inside Dialog is updated --- */}

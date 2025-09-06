@@ -138,10 +138,25 @@ export const GetInterviewInfo = async (req, res) => {
         }));
 
         const codeSnippet = await CodeSnippet.findOne({ sessionId: session._id });
-
-        res.json({ host_email, host_name, participants, code: codeSnippet });
+        const notes = session.notes || '';
+        res.json({ host_email, host_name, participants, code: codeSnippet, notes });
     } catch (err) {
         res.status(500).json({ error: 'Server error' });
         console.error('Error in GetInterviewInfo:', err);
+    }
+};
+
+export const updateNotes = async (req, res) => {
+    const { sessionCode, notes } = req.body;
+    if (typeof notes !== 'string') return res.status(400).json({ message: 'Invalid notes payload' });
+    try {
+        const session = await Session.findOne({ sessionCode });
+        if (!session) return res.status(404).json({ message: 'Session not found' });
+        session.notes = notes;
+        await session.save();
+        return res.json({ success: true });
+    } catch (err) {
+        console.error('Error updating notes:', err);
+        return res.status(500).json({ message: 'Server error' });
     }
 };

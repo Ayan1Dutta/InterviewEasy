@@ -28,21 +28,23 @@ app.use(cors({
 }
 ));
 
-const server = createServer(app); 
+const server = createServer(app);
 
 app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/auth", authRoute);
-app.use("/api/interview" , sessionRoute);
+app.use("/api/interview", sessionRoute);
 
-if(process.env.NODE_ENV === 'production'){
-    app.use(express.static(path.join(__dirname, '../frontend/dist')));
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, '../frontend', 'dist', 'index.html'));
-    });
+
+if (process.env.NODE_ENV === "production") {
+  const buildPath = path.join(__dirname, "..", "frontend", "dist");
+  app.use(express.static(buildPath));
+
+  app.get(/(.*)/, (req, res) => {
+    res.sendFile(path.join(buildPath, "index.html"));
+  });
 }
-
 
 initializeSocket(server);
 // console.log(process.env.MONGO_URI);
