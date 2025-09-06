@@ -56,8 +56,9 @@ const Home = () => {
       return;
     }
     try {
+      const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
       const response = await axios.post(
-        'http://localhost:3000/api/interview/sessions/join',
+        `${API}/api/interview/sessions/join`,
         { sessionCode: interviewCode },
         { withCredentials: true }
       );
@@ -85,8 +86,9 @@ const Home = () => {
     }
 
     try {
+      const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
       const response = await axios.post(
-        'http://localhost:3000/api/interview/sessions',
+        `${API}/api/interview/sessions`,
         {},
         { withCredentials: true }
       );

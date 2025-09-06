@@ -66,8 +66,9 @@ const Login = () => {
   }
   const handleSubmit = async (e) => {
     try {
+      const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
       const res = await axios.post(
-        'http://localhost:3000/api/auth/login',
+        `${API}/api/auth/login`,
         {
           email: Email,
           password: Password,

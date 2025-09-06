@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: peerprep-backend
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: "npm install"
+    startCommand: "node index.js"
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: FRONTEND_ORIGIN
+        value: https://peerprep-frontend.onrender.com
+      - key: NODE_ENV
+        value: production
+      # Set the following in Render dashboard (mark as secret):
+      # - MONGO_URI
+      # - JWT_SECRET

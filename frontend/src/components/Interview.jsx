@@ -102,7 +102,8 @@ const Interview = () => {
   if (!socket) return;
     const fetchInterviewInfo = async () => {
       try {
-        const res = await axios.post("http://localhost:3000/api/interview/sessions/interview", { sessionCode: roomId }, {
+  const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+  const res = await axios.post(`${API}/api/interview/sessions/interview`, { sessionCode: roomId }, {
           headers: { 'Content-Type': 'application/json' },
           withCredentials: true,
         });
@@ -246,10 +247,8 @@ const Interview = () => {
         socket.emit('user-left', { roomId, email: authUser.email });
         if (host) {
           socket.emit('end-interview', { roomId });
-          navigator.sendBeacon(
-            'http://localhost:3000/api/interview/sessions/end',
-            JSON.stringify({ sessionCode: roomId })
-          );
+          const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+          navigator.sendBeacon(`${API}/api/interview/sessions/end`, JSON.stringify({ sessionCode: roomId }));
         }
       }
       closeConnection();
@@ -288,9 +287,8 @@ const Interview = () => {
   const handleEndInterview = async () => {
     socket?.emit('end-interview', { roomId });
     try {
-      await axios.post('http://localhost:3000/api/interview/sessions/end', {
-        sessionCode: roomId
-      }, { withCredentials: true });
+      const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+      await axios.post(`${API}/api/interview/sessions/end`, { sessionCode: roomId }, { withCredentials: true });
     } catch (err) {
       alert('An error occurred while ending the interview.');
     }

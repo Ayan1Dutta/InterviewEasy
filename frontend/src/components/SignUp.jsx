@@ -46,8 +46,9 @@ const Signup = () => {
 
   const handleSubmit = async () => {
     try {
+      const API = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
       const res = await axios.post(
-        'http://localhost:3000/api/auth/signup',
+        `${API}/api/auth/signup`,
         {
           name: Name,
           email: Email,
